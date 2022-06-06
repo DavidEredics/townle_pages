@@ -1,3 +1,3 @@
-# wordle_clone
+# townle
 
-A simple vanilla js clone of Wordle
+Wordle clone with 5 letter town names

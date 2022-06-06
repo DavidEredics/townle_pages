@@ -1,14 +1,59 @@
-import { WORDS } from "./words.js";
+const worker_url = 'https://townle-workers.david-eredics.workers.dev';
 
 const NUMBER_OF_GUESSES = 6;
 let guessesRemaining = NUMBER_OF_GUESSES;
 let currentGuess = [];
 let nextLetter = 0;
-let rightGuessString = WORDS[Math.floor(Math.random() * WORDS.length)]
+let rightGuessString;
+let WORDS;
 
-console.log(rightGuessString)
+function getTown() {
+    fetch(worker_url, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+      })
+        .then(response => {
+          response.text().then(text => {
+            rightGuessString = text;
+            return text;
+          });
+          
+        })
+        .catch(error => {
+          console.error('fetch error:', error);
+        });
+}
+
+function getTownList() {
+    fetch(worker_url + '/towns', {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+      })
+        .then(response => {
+          response.text().then(text => {
+            WORDS = text;
+            return text;
+          });
+          
+        })
+        .catch(error => {
+          console.error('fetch error:', error);
+        });
+}
+
 
 function initBoard() {
+    getTownList();
+    getTown();
+    
     let board = document.getElementById("game-board");
 
     for (let i = 0; i < NUMBER_OF_GUESSES; i++) {
@@ -107,7 +152,7 @@ function checkGuess () {
     }
 
     if (guessString === rightGuessString) {
-        toastr.success("You guessed right! Game over!")
+        toastr.success("You guessed right!")
         guessesRemaining = 0
         return
     } else {
